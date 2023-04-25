@@ -1,34 +1,31 @@
 import React, { useEffect, useState } from 'react'
-import { albumDataArr, songAlbumArr } from '../../utils/album.data'
-import AlbumService from '../../services/album.service'
-import SongService from '../../services/song.service'
 import Sidebar from '../../components/Sidebar'
 import Header from '../../components/Header'
 import CreateTimeSheet from './modals/create-timesheet'
 
 
 const DashboardEmployeeAccess = () => {
-    const [albumData, setalbumData] = useState<any>(albumDataArr)
-    const [songData, setSongData] = useState<any>(songAlbumArr)
     const [showModal,setShowModal] = useState<boolean>(false)
-    const fetchAlbums = async () => {
-        const albumService = new AlbumService();
-        const albums = await albumService.showAlbum();
-        setalbumData(albums?.data?.albums);
-    }
-    const fetchSongs = async () => {
-        const songService = new SongService()
-        const songs = await songService.displaySongs();
-        setSongData(songs?.data?.songs);
-    }
-    useEffect(() => {
-        try {
-            fetchAlbums();
-            fetchSongs()
-        } catch (error: any) {
-            return error;
-        }
-    }, [])
+    // const [albumData, setalbumData] = useState<any>(albumDataArr)
+    // const [songData, setSongData] = useState<any>(songAlbumArr)
+    // const fetchAlbums = async () => {
+    //     const albumService = new AlbumService();
+    //     const albums = await albumService.showAlbum();
+    //     setalbumData(albums?.data?.albums);
+    // }
+    // const fetchSongs = async () => {
+    //     const songService = new SongService()
+    //     const songs = await songService.displaySongs();
+    //     setSongData(songs?.data?.songs);
+    // }
+    // useEffect(() => {
+    //     try {
+    //         fetchAlbums();
+    //         fetchSongs()
+    //     } catch (error: any) {
+    //         return error;
+    //     }
+    // }, [])
 
     return (
         <div className='bg-white min-h-screen min-w-screen relative flex justify-start'>
@@ -68,7 +65,7 @@ const DashboardEmployeeAccess = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {songData ? songData.map((song: any, i: number) => (
+                                    {/* {songData ? songData.map((song: any, i: number) => (
                                         <tr key={i + 1} className="border-b-2 hover:bg-slate-900 hover:cursor-pointer border-gray-500 text-[12px] font-semibold">
                                             <td className='text-center'>
                                                 # {i + 1}
@@ -84,7 +81,7 @@ const DashboardEmployeeAccess = () => {
                                         <tr className='text-main text-[12px]'>
                                             <td>No Data</td>
                                         </tr>
-                                    }
+                                    } */}
                                 </tbody>
                             </table>
                         </div>
