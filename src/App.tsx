@@ -19,7 +19,7 @@ export const App = () => {
             <Route element={<DashboardTask/>} path='/admin/task'/>
             <Route element={<DashboardUser/>} path='/admin/user'/>
             <Route element={<DashboardEmployeeAccess/>} path='/employee/dashboard'/>
-            <Route element={<Login />} path='/auth/login'/>
+            <Route element={<Login />} path='/'/>
             <Route element={<SignUp/>} path='/auth/signup' />
        </Routes>
        </>
