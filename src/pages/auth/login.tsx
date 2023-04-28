@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import authService from '../../services/auth.service'
 import { notifyInfo, notifySuccess } from '../../utils/alerts'
 import Logo from '../../assets/logo'
+import { PRIVILEGE } from '../../utils/custom.data'
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false)
@@ -29,14 +30,16 @@ const Login = () => {
         e.preventDefault();
         try {
             const data = await authService.login(formData);
-            let message = data?.data?.message;
-            let token = data?.data?.token;
-            if (message === 'Authentication successful') {
+            let privilege = data?.data?.user?.privilege;
+            let token = data?.data?.user?.token;
+            if (privilege === PRIVILEGE.ADMIN) {
                 authService.setToken(token)
-                notifySuccess(message);
-                navigate('/');
+                notifySuccess(`Successful Admin Log in`);
+                navigate('/admin/dashboard');
             } else {
-                notifyInfo(message);
+                authService.setToken(token)
+                notifySuccess(`Successful Employee Log in`);
+                navigate('/employee/dashboard')
             }
         } catch (error: any) {
             console.log(error)

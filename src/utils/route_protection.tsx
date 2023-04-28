@@ -10,12 +10,12 @@ const RouteProtection = (WrappedComponent: any) => {
 
     const checkAuthentication = async () => {
       try {
-        setLoader(true)
+        // setLoader(true)
         const response = await authService.isLoggedIn();
         if (response && response.data) {
           setUser(response.data.user);
           setAuthenticated(true);
-          setLoader(false)
+          // setLoader(false)
           if (response?.data?.message === 'User not found') {
             window.location.pathname = '/auth/login';
           }
@@ -28,9 +28,6 @@ const RouteProtection = (WrappedComponent: any) => {
     useEffect(() => {
       checkAuthentication();
     }, []);
-    if (loader) {
-      return <LoaderPage />
-    }
     if (authenticated && !loader) {
       return <WrappedComponent {...props} />;
     } else {

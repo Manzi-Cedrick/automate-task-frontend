@@ -1,5 +1,4 @@
 import Cookies from "js-cookie";
-import jwtDecode from "jwt-decode";
 import { http } from "../utils/https/http-common";
 
 class AuthService {
@@ -22,7 +21,7 @@ class AuthService {
     const token = this.getDecToken();
     if (token) {
       try {
-        return http.get('/auth/user');
+        return http.get('/auth/me');
       } catch (error: any) {
         console.log(error);
         return false;
@@ -34,7 +33,7 @@ class AuthService {
   }
   logout() {
     this.removeToken();
-    return (window.location.href = '/login');
+    return (window.location.href = '/');
   }
   removeToken() {
     Cookies.remove('LOCAL_STORAGE_TOKEN_KEY');

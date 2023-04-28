@@ -8,6 +8,7 @@ import DashboardCustomer from './pages/admin-panel/customer/dashboard'
 import DashboardTask from './pages/admin-panel/task/dashboard'
 import DashboardUser from './pages/admin-panel/user/dashboard'
 import DashboardEmployeeAccess from './pages/employee-panel/dashboard'
+import ReportsDashboard from './pages/admin-panel/reports/dashboard'
 
 export const App = () => {
     return (
@@ -19,6 +20,7 @@ export const App = () => {
             <Route element={<DashboardTask/>} path='/admin/task'/>
             <Route element={<DashboardUser/>} path='/admin/user'/>
             <Route element={<DashboardEmployeeAccess/>} path='/employee/dashboard'/>
+            <Route element={<ReportsDashboard/>} path='/admin/report/:id/:strategy'/>
             <Route element={<Login />} path='/'/>
             <Route element={<SignUp/>} path='/auth/signup' />
        </Routes>

@@ -1,17 +1,35 @@
 import React, { useEffect, useState } from 'react'
 import * as ReactDOM from 'react-dom';
+import { ITask, STATUS } from '../../../../utils/custom.data';
+import service from '../../../../services/admin.service';
+import { notifyError, notifySuccess } from '../../../../utils/alerts';
 
 const CreateTask = ({ showModal, onClose }: { showModal: Boolean, onClose: any }) => {
     const [isBrowser, setBrowser] = useState<Boolean>(false)
+    const [formData, setFormData] = useState<ITask>({
+        task: '',
+        sub_task: '',
+        status: ''
+    })
     useEffect(() => {
         setBrowser(true)
     }, []);
     const handleOnSave = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            
+            let res = await service.createTask(formData);
+            if (res) {
+                notifySuccess("Successfully Created the service");
+                setFormData({
+                    task: '',
+                    sub_task: '',
+                    status: ''
+                });
+                onClose();
+
+            }
         } catch (error: any) {
-            console.log(error)
+            notifyError(error)
             return;
         }
     }
@@ -31,16 +49,26 @@ const CreateTask = ({ showModal, onClose }: { showModal: Boolean, onClose: any }
                         <label className="block text-gray-700 text-[12px] py-2">
                             Task
                         </label>
-                        <input className="shadow appearance-none bg-inputG border rounded w-full py-3 text-[10px] px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="task" type="text" placeholder="Enter task name" />
+                        <input value={formData.task} onChange={(e) => { setFormData({ ...formData, task: e.target.value }) }} className="shadow appearance-none bg-inputG border rounded w-full py-3 text-[10px] px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="task" type="text" placeholder="Enter task name" />
                     </div>
                     <div>
                         <label className="block text-gray-700 text-[12px] py-2">
                             Sub-task
                         </label>
-                        <input className="shadow appearance-none bg-inputG border rounded w-full py-3 text-[10px] px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="sub-task" type="email" placeholder="Enter sub-task" />
+                        <input value={formData.sub_task} onChange={(e) => { setFormData({ ...formData, sub_task: e.target.value }) }} className="shadow appearance-none bg-inputG border rounded w-full py-3 text-[10px] px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="sub-task" type="email" placeholder="Enter sub-task" />
                     </div>
                     <div>
                         <small className='text-[8px] py-1 text-blue-500'>Sub-task is related to parent task.</small>
+                    </div>
+                    <div>
+                        <label className="block text-gray-700 text-[12px] py-2">
+                            Status
+                        </label>
+                        <select onChange={(e) => setFormData({ ...formData, status: e.target.value })} className="shadow appearance-none bg-inputG border rounded w-full py-3 text-[10px] px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                            <option value={'none'}>Choose Status </option>
+                            <option value={STATUS.ACTIVE}>Active </option>
+                            <option value={STATUS.INACTIVE}>Inactive </option>
+                        </select>
                     </div>
                 </div>
                 <form onSubmit={handleOnSave}>
