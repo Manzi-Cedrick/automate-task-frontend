@@ -9,6 +9,7 @@ const Header = () => {
         const userCheck = async () => {
             const response = await authService.isLoggedIn();
             if (response && response.data) {
+                console.log("The user:",response?.data?.user)
                 setUser(response.data.user);
             }
         }
@@ -32,8 +33,8 @@ const Header = () => {
                     <div className='h-12 w-12 rounded-full'>
                         <img className='w-full h-full object-cover rounded-full' src="https://media.istockphoto.com/id/1336246945/photo/beauty-portrait-of-african-american-girl-with-afro-hair.jpg?b=1&s=170667a&w=0&k=20&c=I6URbiSVuR_5BHBMEj7dAryG9ripn47IlWUvtmbHZ0E=" alt="" />
                     </div>
-                    <div className='text-white'>
-                        <h1>{user?.username}</h1>
+                    <div className='text-black'>
+                        <h1 className='font-semibold'>{user?.name}</h1>
                         <p className='text-gray-500 text-[12px]'>Free plan</p>
                     </div>
                 </div>
