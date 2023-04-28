@@ -2,40 +2,40 @@ import React, { useEffect, useState } from 'react'
 import Sidebar from '../../../components/Sidebar'
 import Header from '../../../components/Header'
 import CreateCustomer from './modals/create-customer'
-import CustomerService from '../../../services/customer.service'
+import { ICustomer } from '../../../utils/custom.data'
+import service from '../../../services/admin.service'
+import { notifyError } from '../../../utils/alerts'
+import { useNavigate } from 'react-router-dom'
 
 
 const Dashboard = () => {
-    const [showModal,setShowModal] = useState<boolean>(false)
-    // const [albumData, setalbumData] = useState<any>(albumDataArr)
-    // const [songData, setSongData] = useState<any>(songAlbumArr)
-    // const fetchAlbums = async () => {
-    //     const customerService = new CustomerService();
-    //     const customers = await customerService.showCustomers();
-    //     setalbumData(customers?.data?.customers);
-    // }
-    // const fetchSongs = async () => {
-    //     const songService = new SongService()
-    //     const songs = await songService.displaySongs();
-    //     setSongData(songs?.data?.songs);
-    // }
-    // useEffect(() => {
-    //     try {
-    //         fetchAlbums();
-    //         fetchSongs()
-    //     } catch (error: any) {
-    //         return error;
-    //     }
-    // }, [])
+    const [showModal, setShowModal] = useState<boolean>(false)
+    const [CustomerArr, setCustomerArr] = useState<ICustomer[]>([]);
+    const navigate = useNavigate()
+    useEffect(() => {
+        async function fetchCustomers() {
+            try {
+                const customers = await service.showCustomers();
+                setCustomerArr(customers?.data?.customers)
+            } catch (error: any) {
+                const ERROR_MESSAGE = error.response ? error.response?.data?.error || "Not Fetched, try again!" : error.error;
+                notifyError(ERROR_MESSAGE);
+            }
+        }
+        fetchCustomers()
+    }, []);
 
+    const handleNavigateReport = (id: string) => {
+        return navigate(`/admin/report/${id}/CUSTOMER`)
+    }
     return (
         <div className='bg-white min-h-screen min-w-screen flex justify-start'>
             <Sidebar />
             <div className='py-4 sm:ml-80 w-[80vw] lg:p-8'>
                 <Header />
                 <div className='py-12'>
-                    <div className='bg-music flex px-6  flex-col justify-center w-full h-[20vh] rounded-xl'>
-                        <div className='text-white'>
+                    <div className='border-slate-300 border-2 flex px-6 border-dashed flex-col justify-center w-full h-[20vh] rounded-xl'>
+                        <div className='text-black'>
                             <div className='py-6'>
                                 <h1 className='font-bold text-4xl'>Customer Referal Page!</h1>
                                 <p className='text-gray-500'>Live Automated Billing System</p>
@@ -46,10 +46,9 @@ const Dashboard = () => {
                         <div className='flex place-items-center justify-between'>
                             <h1 className='py-6 text-black'>Customer 's list</h1>
                             <div className='flex gap-3'>
-                                <button onClick={()=>setShowModal(true)} className='bg-main text-white py-3 border-2 border-main duration-500 font-medium hover:bg-transparent hover:text-main text-[12px] px-8 rounded-md'>New Customer</button>
-                                <button className='bg-white text-main py-3 border-2 border-main duration-500 font-medium hover:bg-main hover:text-white text-[12px] px-8 rounded-md'>Print Report</button>
-                            </div>
-                            {showModal && <CreateCustomer showModal={showModal} onClose={()=>setShowModal(false)}/>}
+                                <button onClick={() => setShowModal(true)} className='bg-main text-white py-3 border-2 border-main duration-500 font-medium hover:bg-transparent hover:text-main text-[12px] px-8 rounded-md'>New Customer</button>
+                                </div>
+                            {showModal && <CreateCustomer showModal={showModal} onClose={() => setShowModal(false)} />}
                         </div>
                         <div>
                             <table className=' w-full'>
@@ -64,23 +63,27 @@ const Dashboard = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {/* {songData ? songData.map((song: any, i: number) => (
-                                        <tr key={i + 1} className="border-b-2 hover:bg-slate-900 hover:cursor-pointer border-gray-500 text-[12px] font-semibold">
+                                    {CustomerArr ? CustomerArr.map((custom: ICustomer, i: number) => (
+                                        <tr key={i + 1} onClick={() => { handleNavigateReport(custom.id) }} className={`${i % 2 === 0 ? 'bg-slate-100' : ''} border-b-2 hover:bg-slate-50 hover:cursor-pointer border-gray-100 text-[12px]`}>
                                             <td className='text-center'>
                                                 # {i + 1}
                                             </td>
                                             <td className='flex gap-8 py-3 justify-center place-items-center text-center'>
-                                                <span>{song.title}</span>
+                                                <span>{custom.name}</span>
                                             </td>
-                                            <td className='text-center'>{song.artist}</td>
-                                            <td className='text-center'>{song.length}</td>
-                                            <td className='text-center'>{song.genre}</td>
+                                            <td className='text-center'>{custom.email}</td>
+                                            <td className='text-center'>{''}</td>
+                                            <td className='text-center'>{custom.status}</td>
+                                            <td className='flex font-semibold gap-4 justify-center'>
+                                                <button className='bg-main text-white py-1.5 text-[10px] px-6'>Edit</button>
+                                                <button className='text-red-500  py-1.5 text-[10px] px-6'>Edit</button>
+                                            </td>
                                         </tr>
                                     )) :
                                         <tr className='text-main text-[12px]'>
                                             <td>No Data</td>
                                         </tr>
-                                    } */}
+                                    }
                                 </tbody>
                             </table>
                         </div>
