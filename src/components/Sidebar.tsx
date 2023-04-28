@@ -1,6 +1,8 @@
 import Logo from '../assets/logo'
 import { Link, useLocation } from 'react-router-dom'
 import { sideBarArr, sideBarArrEmployee } from '../utils/pagedata'
+import authService from '../services/auth.service';
+import { FaSignOutAlt } from 'react-icons/fa';
 const Sidebar = () => {
     const linkSet = sideBarArr;
     const route = useLocation();
@@ -16,6 +18,9 @@ const Sidebar = () => {
         }
         return sideBarArrEmployee
     }
+    const handleSystemSignOut = async () => {
+        authService.logout();
+    }
     return (
         <aside className='bg-[#F4F6F8] fixed top-0 left-0 z-10 border-r-2 border-gray-200 w-[20vw] min-h-screen flex px-2 flex-col'>
             <div className='flex gap-4 px-4 place-items-center flex-row py-6'>
@@ -29,6 +34,10 @@ const Sidebar = () => {
                         <span>{link.link_name}</span>
                     </Link>
                 ))}
+                <div onClick={handleSystemSignOut} className={` py-4 hover:cursor-pointer duration-500 flex place-items-center px-8 hover:bg-white gap-8 rounded-md`}>
+                    <FaSignOutAlt />
+                    <span>Sign Out</span>
+                </div>
             </div>
         </aside>
     )
