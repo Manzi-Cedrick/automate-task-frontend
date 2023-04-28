@@ -1,17 +1,53 @@
 import React, { useEffect, useState } from 'react'
 import * as ReactDOM from 'react-dom';
+import { ICustomer, IRole, PRIVILEGE, STATUS } from '../../../../utils/custom.data';
+import service from '../../../../services/admin.service';
+import { notifyError, notifySuccess } from '../../../../utils/alerts';
 
 const CreateCustomer = ({ showModal, onClose }: { showModal: Boolean, onClose: any }) => {
-    const [isBrowser, setBrowser] = useState<Boolean>(false)
+    const [isBrowser, setBrowser] = useState<Boolean>(false);
+    const [formData, setFormData] = useState<ICustomer>({
+        id: '',
+        name: '',
+        email: '',
+        status: '',
+        role: '',
+        password: '',
+        hourly_rate: 0
+    })
+    const [roleArr, setRoleValues] = useState<IRole[]>([])
     useEffect(() => {
-        setBrowser(true)
+        setBrowser(true);
+        async function fetchRoles() {
+            try {
+                const roles = await service.getRoles();
+                setRoleValues(roles?.data?.roles)
+            } catch (error: any) {
+                const ERROR_MESSAGE = error.response ? error.response?.data?.error || "Not Fetched, try again!" : error.error;
+                notifyError(ERROR_MESSAGE);
+            }
+        }
+        fetchRoles()
     }, []);
     const handleOnSave = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            
+            let res = await service.createCustomer(formData);
+            if (res) {
+                notifySuccess("Successfully Created the service");
+                setFormData({
+                    id: '',
+                    name: '',
+                    email: '',
+                    status: '',
+                    role: '',
+                    password: '',
+                    hourly_rate: 0
+                });
+                onClose();
+            }
         } catch (error: any) {
-            console.log(error)
+            notifyError(error)
             return;
         }
     }
@@ -31,32 +67,44 @@ const CreateCustomer = ({ showModal, onClose }: { showModal: Boolean, onClose: a
                         <label className="block text-gray-700 text-[12px] py-2">
                             Name
                         </label>
-                        <input className="shadow appearance-none bg-inputG border rounded w-full py-3 text-[10px] px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Enter customer name" />
+                        <input value={formData.name} onChange={(e) => { setFormData({ ...formData, name: e.target.value }) }} className="shadow appearance-none bg-inputG border rounded w-full py-3 text-[10px] px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Enter customer name" />
                     </div>
                     <div>
                         <label className="block text-gray-700 text-[12px] py-2">
                             Email
                         </label>
-                        <input className="shadow appearance-none bg-inputG border rounded w-full py-3 text-[10px] px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="Enter customer email" />
+                        <input value={formData.email} onChange={(e) => { setFormData({ ...formData, email: e.target.value }) }} className="shadow appearance-none bg-inputG border rounded w-full py-3 text-[10px] px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="Enter customer email" />
+                    </div>
+                    <div>
+                        <label className="block text-gray-700 text-[12px] py-2">
+                            Password
+                        </label>
+                        <input value={formData.password} onChange={(e) => { setFormData({ ...formData, password: e.target.value }) }} className="shadow appearance-none bg-inputG border rounded w-full py-3 text-[10px] px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="Enter customer password" />
+                    </div>
+                    <div>
+                        <label className="block text-gray-700 text-[12px] py-2">
+                            Hourly Rate
+                        </label>
+                        <input value={formData.hourly_rate} onChange={(e) => { setFormData({ ...formData, hourly_rate: e.target.valueAsNumber }) }} className="shadow appearance-none bg-inputG border rounded w-full py-3 text-[10px] px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="number" placeholder="Enter customer number" />
                     </div>
                     <div>
                         <label className="block text-gray-700 text-[12px] py-2">
                             Role
                         </label>
-                        <select className="shadow appearance-none bg-inputG border rounded w-full py-3 text-[10px] px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                            <option value={'none'}>Choose Role </option>
-                            <option value={'designer'}>Jr.Designer </option>
-                            <option value={'sr-designer'}>Sr.Designer </option>
+                        <select onChange={(e) => setFormData({ ...formData, role: e.target.value })} className="shadow appearance-none bg-inputG border rounded w-full py-3 text-[10px] px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                            {roleArr.map((role: IRole) => (
+                                <option key={role?.id} value={role?.id}>{role?.value} {role?.fee}</option>
+                            ))}
                         </select>
                     </div>
                     <div>
                         <label className="block text-gray-700 text-[12px] py-2">
                             Status
                         </label>
-                        <select className="shadow appearance-none bg-inputG border rounded w-full py-3 text-[10px] px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <select onChange={(e) => setFormData({ ...formData, status: e.target.value })} className="shadow appearance-none bg-inputG border rounded w-full py-3 text-[10px] px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                             <option value={'none'}>Choose Status </option>
-                            <option value={'active'}>Active </option>
-                            <option value={'in-active'}>Inactive </option>
+                            <option value={STATUS.ACTIVE}>Active </option>
+                            <option value={STATUS.INACTIVE}>Inactive </option>
                         </select>
                     </div>
                     <div>
